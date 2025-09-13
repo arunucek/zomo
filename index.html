@@ -117,7 +117,65 @@
     <!-- Products Section -->
     <section id="products" class="py-5">
         <div class="container">
-            <h2 class="text-center mb-5">Featured Products</h2>
+            <h2 class="text-center mb-4">Featured Products</h2>
+            
+            <!-- Category Filter Buttons -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex flex-wrap justify-content-center gap-2 category-filters">
+                        <button class="btn btn-outline-primary category-btn active" data-category="All">
+                            <i class="fas fa-th-large me-2"></i>All Products
+                        </button>
+                        
+                        <!-- Major Categories -->
+                        <button class="btn btn-outline-primary category-btn" data-category="Electronics">
+                            <i class="fas fa-laptop me-2"></i>Electronics
+                        </button>
+                        <button class="btn btn-outline-primary category-btn" data-category="Food">
+                            <i class="fas fa-pizza-slice me-2"></i>Food
+                        </button>
+                        <button class="btn btn-outline-primary category-btn" data-category="Gifts">
+                            <i class="fas fa-gift me-2"></i>Gifts
+                        </button>
+                        <button class="btn btn-outline-primary category-btn" data-category="Vegetables">
+                            <i class="fas fa-carrot me-2"></i>Vegetables
+                        </button>
+                        <button class="btn btn-outline-primary category-btn" data-category="Fruits">
+                            <i class="fas fa-apple-alt me-2"></i>Fruits
+                        </button>
+                        <button class="btn btn-outline-primary category-btn" data-category="Flowers">
+                            <i class="fas fa-seedling me-2"></i>Flowers
+                        </button>
+                        
+                        <!-- Specific Categories -->
+                        <button class="btn btn-outline-primary category-btn" data-category="audio">
+                            <i class="fas fa-headphones me-2"></i>Audio
+                        </button>
+                        <button class="btn btn-outline-primary category-btn" data-category="gaming">
+                            <i class="fas fa-gamepad me-2"></i>Gaming
+                        </button>
+                        <button class="btn btn-outline-primary category-btn" data-category="monitors">
+                            <i class="fas fa-desktop me-2"></i>Monitors
+                        </button>
+                        <button class="btn btn-outline-primary category-btn" data-category="accessories">
+                            <i class="fas fa-mouse me-2"></i>Accessories
+                        </button>
+                        <button class="btn btn-outline-primary category-btn" data-category="phones">
+                            <i class="fas fa-mobile-alt me-2"></i>Phones
+                        </button>
+                        <button class="btn btn-outline-primary category-btn" data-category="laptops">
+                            <i class="fas fa-laptop me-2"></i>Laptops
+                        </button>
+                        <button class="btn btn-outline-primary category-btn" data-category="tablets">
+                            <i class="fas fa-tablet-alt me-2"></i>Tablets
+                        </button>
+                        <button class="btn btn-outline-primary category-btn" data-category="wearables">
+                            <i class="fas fa-watch me-2"></i>Wearables
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
             <div class="row" id="products-container">
                 <!-- Products will be loaded here by JavaScript -->
             </div>
@@ -165,6 +223,7 @@
             loadProducts();
             updateCartCount();
             updateUserInterface();
+            initializeCategoryFilters();
         });
     </script>
 </body>

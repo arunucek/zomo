@@ -134,6 +134,68 @@
                             </div>
                         </div>
 
+                        <!-- Delivery Information -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Delivery Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="deliveryDate" class="form-label">Preferred Delivery Date *</label>
+                                        <input type="date" class="form-control" id="deliveryDate" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="deliveryTime" class="form-label">Preferred Time Slot *</label>
+                                        <select class="form-control" id="deliveryTime" required>
+                                            <option value="">Select Time Slot</option>
+                                            <option value="morning">Morning (9:00 AM - 12:00 PM)</option>
+                                            <option value="afternoon">Afternoon (12:00 PM - 4:00 PM)</option>
+                                            <option value="evening">Evening (4:00 PM - 8:00 PM)</option>
+                                            <option value="anytime">Any Time (9:00 AM - 8:00 PM)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="deliveryType" class="form-label">Delivery Type *</label>
+                                        <select class="form-control" id="deliveryType" required>
+                                            <option value="standard">Standard Delivery (2-3 days) - Free</option>
+                                            <option value="express">Express Delivery (1-2 days) - $9.99</option>
+                                            <option value="sameday">Same Day Delivery - $19.99</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="deliveryLocation" class="form-label">Delivery Location *</label>
+                                        <select class="form-control" id="deliveryLocation" required>
+                                            <option value="door">At Door</option>
+                                            <option value="lobby">Building Lobby</option>
+                                            <option value="office">Office Reception</option>
+                                            <option value="other">Other (specify in instructions)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="contactPerson" class="form-label">Contact Person for Delivery</label>
+                                    <input type="text" class="form-control" id="contactPerson" placeholder="Name of person to receive delivery (if different)">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="contactPhone" class="form-label">Contact Phone for Delivery</label>
+                                    <input type="tel" class="form-control" id="contactPhone" placeholder="Phone number for delivery updates">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="deliveryInstructions" class="form-label">Delivery Instructions</label>
+                                    <textarea class="form-control" id="deliveryInstructions" rows="3" placeholder="Special delivery instructions (gate code, building entrance, etc.)"></textarea>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="smsUpdates">
+                                    <label class="form-check-label" for="smsUpdates">
+                                        Send SMS updates about delivery status
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Payment Information -->
                         <div class="card mb-4">
                             <div class="card-header">
