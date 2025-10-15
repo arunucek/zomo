@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Verify Products | Zomo Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="fas fa-crown me-2"></i>Zomo Store
+            </a>
+        </div>
+    </nav>
+
+    <nav aria-label="breadcrumb" class="bg-light py-3">
+        <div class="container">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="admin-login.html">Admin</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Verify Products</li>
+            </ol>
+        </div>
+    </nav>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="crown-icon">Pending Products</h2>
+                <a href="admin-manage-products.html" class="btn btn-outline-primary">
+                    <i class="fas fa-cog me-2"></i>Manage Products
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div id="no-pending" class="text-center py-5 d-none">
+                        <i class="fas fa-inbox display-1 text-muted mb-3"></i>
+                        <h5 class="text-muted">No pending products</h5>
+                        <p class="text-muted">Seller submissions awaiting approval will appear here.</p>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Seller</th>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Submitted</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pending-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAdminAccess()) return;
+
+            const tbody = document.getElementById('pending-table');
+            const noPending = document.getElementById('no-pending');
+
+            function render() {
+                const items = getPendingProducts();
+                tbody.innerHTML = '';
+                if (items.length === 0) {
+                    noPending.classList.remove('d-none');
+                    return;
+                }
+                noPending.classList.add('d-none');
+                items.forEach(p => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <strong>${p.seller.sellerName}</strong><br>
+                            <small class="text-muted">${p.seller.email}</small>
+                        </td>
+                        <td>
+                            <strong>${p.product.name}</strong><br>
+                            <small class="text-muted">${p.product.description}</small>
+                        </td>
+                        <td><span class="badge bg-secondary">${p.product.category}</span></td>
+                        <td class="fw-bold text-primary">$${p.product.price.toFixed(2)}</td>
+                        <td><small>${new Date(p.submittedAt).toLocaleString()}</small></td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-success" data-id="${p.id}" data-action="approve">
+                                    <i class="fas fa-check me-1"></i>Approve
+                                </button>
+                                <button class="btn btn-outline-danger" data-id="${p.id}" data-action="reject">
+                                    <i class="fas fa-times me-1"></i>Reject
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            tbody.addEventListener('click', function(e) {
+                const btn = e.target.closest('button');
+                if (!btn) return;
+                const id = btn.getAttribute('data-id');
+                const action = btn.getAttribute('data-action');
+                if (action === 'approve') {
+                    const added = approvePendingProduct(id);
+                    if (added) {
+                        showAlert(`Approved and published: ${added.name}`, 'success');
+                        render();
+                    }
+                } else if (action === 'reject') {
+                    const reason = prompt('Enter rejection reason (optional):') || '';
+                    if (rejectPendingProduct(id, reason)) {
+                        showAlert('Submission rejected.', 'info');
+                        render();
+                    }
+                }
+            });
+
+            render();
+        });
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistant - Zomo Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="fas fa-crown me-2"></i>Zomo Store
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Shop</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="tickets.html">Tickets</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="chatbot.html">Assistant</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow">
+                        <div class="card-header d-flex align-items-center">
+                            <i class="fas fa-robot me-2"></i>
+                            <strong>Zomo Assistant</strong>
+                        </div>
+                        <div class="card-body p-0" style="height: 60vh; display:flex; flex-direction:column;">
+                            <div id="chat-log" class="p-3" style="overflow:auto; flex: 1; background:#f8fafc;"></div>
+                            <div class="border-top p-3">
+                                <form id="chat-form" class="d-flex gap-2">
+                                    <input id="chat-input" class="form-control" placeholder="Ask about products, orders, tickets, delivery..." autocomplete="off">
+                                    <button class="btn btn-primary" type="submit"><i class="fas fa-paper-plane"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        function addMsg(text, role) {
+            const log = document.getElementById('chat-log');
+            const wrap = document.createElement('div');
+            wrap.className = role === 'user' ? 'text-end mb-2' : 'mb-2';
+            wrap.innerHTML = `<div class="d-inline-block p-2 rounded ${role==='user'?'bg-primary text-white':'bg-white border'}" style="max-width: 100%">${text}</div>`;
+            log.appendChild(wrap);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        document.getElementById('chat-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const q = (input.value || '').trim();
+            if (!q) return;
+            addMsg(q, 'user');
+            input.value = '';
+            setTimeout(() => {
+                const a = zomoAssistantAnswer(q);
+                addMsg(a, 'bot');
+            }, 100);
+        });
+
+        // Enhanced Greeting with name memory
+        const timeOfDay = new Date().getHours();
+        const greeting = timeOfDay < 12 ? 'Good morning' : timeOfDay < 18 ? 'Good afternoon' : 'Good evening';
+        const savedName = (localStorage.getItem('zomostore_chat_user_name') || '').trim();
+        const nameLine = savedName ? ` ${savedName},` : '';
+        addMsg(`${greeting}${nameLine} I'm your Zomo Store AI assistant. I can help you with:\n\n🛍️ **Shopping**: Find products, check prices, add to cart\n📦 **Orders**: Track orders, delivery status, order history\n🎫 **Tickets**: Book theatre, events, transport (flights, trains, buses)\n🚚 **Delivery**: Delivery options, tracking, delivery personnel\n👨‍💼 **Admin**: Product management, order processing\n🏪 **Seller**: Submit products for approval\n\n**Try asking:**\n• "My name is Arun"\n• "Show me electronics under $100"\n• "Find flights from Mumbai to Delhi"\n• "Track my orders"\n• "How to become a seller?"\n\nWhat would you like help with?`, 'bot');
+    </script>
+</body>
+</html>
+
+

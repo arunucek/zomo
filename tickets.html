@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tickets & Bookings - Zomo Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="fas fa-crown me-2"></i>Zomo Store
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Shop</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="tickets.html">Tickets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="chatbot.html">Assistant</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="cart.html">
+                            <i class="fas fa-shopping-cart"></i>
+                            Cart <span class="badge bg-secondary cart-count">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> <span class="user-name">Account</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="login-section">
+                                <a class="dropdown-item" href="login.html">Login</a>
+                            </li>
+                            <li class="login-section">
+                                <a class="dropdown-item" href="signup.html">Sign Up</a>
+                            </li>
+                            <li class="profile-section d-none">
+                                <a class="dropdown-item" href="profile.html">Profile</a>
+                            </li>
+                            <li class="profile-section d-none">
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li class="admin-section" style="display: none;">
+                                <a class="dropdown-item" href="admin-add-product.html">
+                                    <i class="fas fa-plus me-2"></i>Add Product
+                                </a>
+                            </li>
+                            <li class="admin-section" style="display: none;">
+                                <a class="dropdown-item" href="admin-manage-products.html">
+                                    <i class="fas fa-cog me-2"></i>Manage Products
+                                </a>
+                            </li>
+                            <li class="admin-section" style="display: none;">
+                                <a class="dropdown-item" href="admin-orders.html">
+                                    <i class="fas fa-clipboard-list me-2"></i>View Orders
+                                </a>
+                            </li>
+                            <li class="admin-section" style="display: none;">
+                                <a class="dropdown-item" href="admin-delivery.html">
+                                    <i class="fas fa-truck me-2"></i>Manage Delivery
+                                </a>
+                            </li>
+                            <li class="admin-section" style="display: none;">
+                                <a class="dropdown-item" href="admin-verify-products.html">
+                                    <i class="fas fa-check-circle me-2"></i>Verify Products
+                                </a>
+                            </li>
+                            <li class="admin-section" style="display: none;">
+                                <a class="dropdown-item" href="admin-international-procurement.html">
+                                    <i class="fas fa-globe me-2"></i>International Procurement
+                                </a>
+                            </li>
+                            <li class="admin-section" style="display: none;">
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li class="admin-section" style="display: none;">
+                                <a class="dropdown-item" href="#" onclick="adminLogout()">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Admin Logout
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li class="non-admin-section">
+                                <a class="dropdown-item" href="seller-login.html">
+                                    <i class="fas fa-store me-2"></i>Seller Login
+                                </a>
+                            </li>
+                            <li class="non-admin-section">
+                                <a class="dropdown-item" href="admin-login.html">
+                                    <i class="fas fa-shield-alt me-2"></i>Admin Login
+                                </a>
+                            </li>
+                            <li class="profile-section d-none">
+                                <a class="dropdown-item" href="#" onclick="logout()">Logout</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-4 crown-icon">Tickets & Bookings</h2>
+            <ul class="nav nav-tabs" id="ticketTabs" role="tablist">
+                <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#theatre" type="button" role="tab"><i class="fas fa-masks-theater me-2"></i>Theatre</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#events" type="button" role="tab"><i class="fas fa-music me-2"></i>Events</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#car" type="button" role="tab"><i class="fas fa-car me-2"></i>Car</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#bus" type="button" role="tab"><i class="fas fa-bus me-2"></i>Bus</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#train" type="button" role="tab"><i class="fas fa-train me-2"></i>Train</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#flight" type="button" role="tab"><i class="fas fa-plane me-2"></i>Flight</button></li>
+            </ul>
+
+            <div class="tab-content pt-4">
+                <div class="tab-pane fade show active" id="theatre" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <input id="searchTheatre" class="form-control" placeholder="Search shows or city...">
+                                </div>
+                            </div>
+                            <div id="listTheatre" class="mb-4"></div>
+                            <form id="form-theatre" class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Show *</label>
+                                    <input class="form-control" id="theatreShow" placeholder="Movie/Play name" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Date *</label>
+                                    <input type="date" class="form-control" id="theatreDate" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Seats *</label>
+                                    <input type="number" class="form-control" id="theatreSeats" min="1" value="1" required>
+                                </div>
+                                <div class="col-12 text-end">
+                                    <button class="btn btn-primary" type="submit"><i class="fas fa-ticket me-2"></i>Book Theatre</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="events" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <input id="searchEvents" class="form-control" placeholder="Search events or city...">
+                                </div>
+                            </div>
+                            <div id="listEvents" class="mb-4"></div>
+                            <form id="form-events" class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Event *</label>
+                                    <input class="form-control" id="eventName" placeholder="Concert/Conference name" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Date *</label>
+                                    <input type="date" class="form-control" id="eventDate" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Tickets *</label>
+                                    <input type="number" class="form-control" id="eventTickets" min="1" value="1" required>
+                                </div>
+                                <div class="col-12 text-end">
+                                    <button class="btn btn-primary" type="submit"><i class="fas fa-ticket me-2"></i>Book Event</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="car" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row g-2 align-items-end mb-2">
+                                <div class="col-md-3">
+                                    <input id="carFromSearch" class="form-control" placeholder="From">
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="carToSearch" class="form-control" placeholder="To">
+                                </div>
+                                <div class="col-md-2">
+                                    <button id="carSearchBtn" class="btn btn-outline-primary w-100" type="button">Find Routes</button>
+                                </div>
+                            </div>
+                            <div id="listCar" class="mb-3"></div>
+                            <form id="form-car" class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Pickup *</label>
+                                    <input class="form-control" id="carFrom" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Drop *</label>
+                                    <input class="form-control" id="carTo" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Distance (km)</label>
+                                    <input type="number" class="form-control" id="carKm" min="1" value="10">
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button class="btn btn-primary w-100" type="submit"><i class="fas fa-car-side me-2"></i>Book Car</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="bus" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row g-2 align-items-end mb-2">
+                                <div class="col-md-3">
+                                    <input id="busFromSearch" class="form-control" placeholder="From">
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="busToSearch" class="form-control" placeholder="To">
+                                </div>
+                                <div class="col-md-2">
+                                    <button id="busSearchBtn" class="btn btn-outline-primary w-100" type="button">Find Routes</button>
+                                </div>
+                            </div>
+                            <div id="listBus" class="mb-3"></div>
+                            <form id="form-bus" class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">From *</label>
+                                    <input class="form-control" id="busFrom" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">To *</label>
+                                    <input class="form-control" id="busTo" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Date *</label>
+                                    <input type="date" class="form-control" id="busDate" required>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button class="btn btn-primary w-100" type="submit"><i class="fas fa-bus me-2"></i>Book Bus</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="train" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row g-2 align-items-end mb-2">
+                                <div class="col-md-3">
+                                    <input id="trainFromSearch" class="form-control" placeholder="From">
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="trainToSearch" class="form-control" placeholder="To">
+                                </div>
+                                <div class="col-md-2">
+                                    <button id="trainSearchBtn" class="btn btn-outline-primary w-100" type="button">Find Routes</button>
+                                </div>
+                            </div>
+                            <div id="listTrain" class="mb-3"></div>
+                            <form id="form-train" class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">From *</label>
+                                    <input class="form-control" id="trainFrom" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">To *</label>
+                                    <input class="form-control" id="trainTo" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Date *</label>
+                                    <input type="date" class="form-control" id="trainDate" required>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button class="btn btn-primary w-100" type="submit"><i class="fas fa-train me-2"></i>Book Train</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="flight" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row g-2 align-items-end mb-2">
+                                <div class="col-md-3">
+                                    <input id="flightFromSearch" class="form-control" placeholder="From">
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="flightToSearch" class="form-control" placeholder="To">
+                                </div>
+                                <div class="col-md-2">
+                                    <button id="flightSearchBtn" class="btn btn-outline-primary w-100" type="button">Find Routes</button>
+                                </div>
+                            </div>
+                            <div id="listFlight" class="mb-3"></div>
+                            <form id="form-flight" class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">From *</label>
+                                    <input class="form-control" id="flightFrom" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">To *</label>
+                                    <input class="form-control" id="flightTo" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Date *</label>
+                                    <input type="date" class="form-control" id="flightDate" required>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button class="btn btn-primary w-100" type="submit"><i class="fas fa-plane-departure me-2"></i>Book Flight</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        function handleSubmit(formId, type, mapFields, successMsg) {
+            document.getElementById(formId).addEventListener('submit', function(e) {
+                e.preventDefault();
+                const payload = mapFields();
+                const record = createBooking(type, payload);
+                showAlert(successMsg + ' Booking ID: ' + record.id + '. Downloading ticket...', 'success');
+                e.target.reset();
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Date helpers
+            const todayISO = new Date().toISOString().split('T')[0];
+            function setTodayIfEmpty(inputId) {
+                const el = document.getElementById(inputId);
+                if (!el) return;
+                el.min = todayISO;
+                if (!el.value) el.value = todayISO;
+            }
+            handleSubmit('form-theatre', 'theatre', () => ({
+                show: document.getElementById('theatreShow').value.trim(),
+                date: document.getElementById('theatreDate').value,
+                seats: parseInt(document.getElementById('theatreSeats').value) || 1
+            }), 'Theatre booked!');
+
+            handleSubmit('form-events', 'event', () => ({
+                event: document.getElementById('eventName').value.trim(),
+                date: document.getElementById('eventDate').value,
+                tickets: parseInt(document.getElementById('eventTickets').value) || 1
+            }), 'Event booked!');
+
+            handleSubmit('form-car', 'car', () => ({
+                from: document.getElementById('carFrom').value.trim(),
+                to: document.getElementById('carTo').value.trim(),
+                distanceKm: parseFloat(document.getElementById('carKm').value) || 10,
+                estimatedFare: calculateTransportFare(document.getElementById('carKm').value, 2.5, 0.9)
+            }), 'Car booked!');
+
+            handleSubmit('form-bus', 'bus', () => ({
+                from: document.getElementById('busFrom').value.trim(),
+                to: document.getElementById('busTo').value.trim(),
+                date: document.getElementById('busDate').value
+            }), 'Bus booked!');
+
+            handleSubmit('form-train', 'train', () => ({
+                from: document.getElementById('trainFrom').value.trim(),
+                to: document.getElementById('trainTo').value.trim(),
+                date: document.getElementById('trainDate').value
+            }), 'Train booked!');
+
+            handleSubmit('form-flight', 'flight', () => ({
+                from: document.getElementById('flightFrom').value.trim(),
+                to: document.getElementById('flightTo').value.trim(),
+                date: document.getElementById('flightDate').value
+            }), 'Flight booked!');
+
+            // Listings & search
+            function renderTheatreList() {
+                const q = document.getElementById('searchTheatre')?.value || '';
+                const items = searchCatalog(BOOKING_CATALOG.theatre, q);
+                const box = document.getElementById('listTheatre');
+                if (!box) return;
+                box.innerHTML = items.map(i => `<div class="d-flex justify-content-between align-items-center border rounded p-2 mb-2"><div><strong>${i.title}</strong><br><small class="text-muted">${i.city}</small></div><button class="btn btn-sm btn-outline-primary" data-title="${i.title}" data-prefill="theatre">Select</button></div>`).join('');
+            }
+            function renderEventList() {
+                const q = document.getElementById('searchEvents')?.value || '';
+                const items = searchCatalog(BOOKING_CATALOG.events, q);
+                const box = document.getElementById('listEvents');
+                if (!box) return;
+                box.innerHTML = items.map(i => `<div class="d-flex justify-content-between align-items-center border rounded p-2 mb-2"><div><strong>${i.title}</strong><br><small class="text-muted">${i.city} • ${i.date}</small></div><button class="btn btn-sm btn-outline-primary" data-title="${i.title}" data-date="${i.date}" data-prefill="event">Select</button></div>`).join('');
+            }
+            function renderRoutes(mode, fromInputId, toInputId, listId, showNoResults) {
+                const from = document.getElementById(fromInputId)?.value || '';
+                const to = document.getElementById(toInputId)?.value || '';
+                const items = filterRoutes(mode, from, to);
+                const box = document.getElementById(listId);
+                if (!box) return;
+                if (items.length === 0) {
+                    box.innerHTML = showNoResults ? `<div class="text-muted">No routes found. Try different From/To.</div>` : '';
+                    return;
+                }
+                box.innerHTML = items.map(r => `<div class="d-flex justify-content-between align-items-center border rounded p-2 mb-2"><div><strong>${r.from} → ${r.to}</strong><br><small class="text-muted">${r.km} km</small></div><button class="btn btn-sm btn-outline-primary" data-from="${r.from}" data-to="${r.to}" data-km="${r.km}" data-prefill="${mode}">Select</button></div>`).join('');
+            }
+
+            document.getElementById('searchTheatre')?.addEventListener('input', renderTheatreList);
+            document.getElementById('searchEvents')?.addEventListener('input', renderEventList);
+            // Search only after clicking the button (lists are empty by default)
+            document.getElementById('carSearchBtn')?.addEventListener('click', () => renderRoutes('car', 'carFromSearch', 'carToSearch', 'listCar', true));
+            document.getElementById('busSearchBtn')?.addEventListener('click', () => renderRoutes('bus', 'busFromSearch', 'busToSearch', 'listBus', true));
+            document.getElementById('trainSearchBtn')?.addEventListener('click', () => renderRoutes('train', 'trainFromSearch', 'trainToSearch', 'listTrain', true));
+            document.getElementById('flightSearchBtn')?.addEventListener('click', () => renderRoutes('flight', 'flightFromSearch', 'flightToSearch', 'listFlight', true));
+
+            document.body.addEventListener('click', function(e) {
+                const btn = e.target.closest('button[data-prefill]');
+                if (!btn) return;
+                const type = btn.getAttribute('data-prefill');
+                if (type === 'theatre') {
+                    document.getElementById('theatreShow').value = btn.getAttribute('data-title');
+                    setTodayIfEmpty('theatreDate');
+                } else if (type === 'event') {
+                    document.getElementById('eventName').value = btn.getAttribute('data-title');
+                    document.getElementById('eventDate').value = btn.getAttribute('data-date') || '';
+                    setTodayIfEmpty('eventDate');
+                } else if (type === 'car') {
+                    document.getElementById('carFrom').value = btn.getAttribute('data-from');
+                    document.getElementById('carTo').value = btn.getAttribute('data-to');
+                    document.getElementById('carKm').value = btn.getAttribute('data-km');
+                } else if (type === 'bus') {
+                    document.getElementById('busFrom').value = btn.getAttribute('data-from');
+                    document.getElementById('busTo').value = btn.getAttribute('data-to');
+                } else if (type === 'train') {
+                    document.getElementById('trainFrom').value = btn.getAttribute('data-from');
+                    document.getElementById('trainTo').value = btn.getAttribute('data-to');
+                } else if (type === 'flight') {
+                    document.getElementById('flightFrom').value = btn.getAttribute('data-from');
+                    document.getElementById('flightTo').value = btn.getAttribute('data-to');
+                }
+            });
+
+            // Initial renders (lists hidden until Find Routes is clicked)
+            renderTheatreList();
+            renderEventList();
+            document.getElementById('listCar').innerHTML = '';
+            document.getElementById('listBus').innerHTML = '';
+            document.getElementById('listTrain').innerHTML = '';
+            document.getElementById('listFlight').innerHTML = '';
+
+            // Prefill today's date for all date inputs if empty
+            ['theatreDate','eventDate','busDate','trainDate','flightDate'].forEach(setTodayIfEmpty);
+        });
+    </script>
+</body>
+</html>
+
+

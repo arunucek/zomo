@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller - Submit Product | Zomo Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="fas fa-crown me-2"></i>Zomo Store
+            </a>
+            <div class="ms-auto">
+                <a class="btn btn-outline-light btn-sm" href="#" onclick="sellerLogout()">
+                    <i class="fas fa-right-from-bracket me-1"></i>Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow royal-border">
+                        <div class="card-header luxury-gradient text-white">
+                            <h5 class="mb-0"><i class="fas fa-box-open me-2"></i>Submit Product for Approval</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="seller-product-form">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Product Name *</label>
+                                        <input type="text" class="form-control" id="spName" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Price (USD) *</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input type="number" class="form-control" id="spPrice" min="0" step="0.01" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Category *</label>
+                                    <select class="form-control" id="spCategory" required>
+                                        <option value="">Select Category</option>
+                                        <option value="Electronics">Electronics</option>
+                                        <option value="Food">Food</option>
+                                        <option value="Gifts">Gifts</option>
+                                        <option value="Vegetables">Vegetables</option>
+                                        <option value="Fruits">Fruits</option>
+                                        <option value="Flowers">Flowers</option>
+                                        <option value="Dresses">Dresses</option>
+                                        <option value="Meats">Meats</option>
+                                        <option value="Rices">Rices</option>
+                                        <option value="Snacks">Snacks</option>
+                                        <option value="Creams">Creams</option>
+                                        <option value="Home Appliances">Home Appliances</option>
+                                        <option value="audio">Audio</option>
+                                        <option value="gaming">Gaming</option>
+                                        <option value="monitors">Monitors</option>
+                                        <option value="accessories">Accessories</option>
+                                        <option value="phones">Phones</option>
+                                        <option value="laptops">Laptops</option>
+                                        <option value="tablets">Tablets</option>
+                                        <option value="wearables">Wearables</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Short Description *</label>
+                                    <textarea class="form-control" id="spDescription" rows="2" required></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Detailed Description *</label>
+                                    <textarea class="form-control" id="spLongDescription" rows="4" required></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Key Features *</label>
+                                    <div id="sp-features-container">
+                                        <div class="input-group mb-2">
+                                            <input type="text" class="form-control" placeholder="Enter a key feature">
+                                            <button type="button" class="btn btn-outline-danger" onclick="this.closest('.input-group').remove()">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" id="sp-add-feature">
+                                        <i class="fas fa-plus me-2"></i>Add Feature
+                                    </button>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Product Image (optional)</label>
+                                    <input type="file" class="form-control" id="spImage" accept="image/*">
+                                    <div class="form-text">Upload a product image, or leave empty to use the selected icon.</div>
+                                    <div id="sp-image-preview" class="mt-3" style="display: none;">
+                                        <img id="sp-preview-img" src="" alt="Preview" class="img-thumbnail" style="max-width: 200px;">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Product Icon *</label>
+                                    <select class="form-control" id="spIcon" required>
+                                        <option value="">Select Icon</option>
+                                        <option value="fas fa-headphones">Headphones</option>
+                                        <option value="fas fa-keyboard">Keyboard</option>
+                                        <option value="fas fa-desktop">Desktop</option>
+                                        <option value="fas fa-laptop">Laptop</option>
+                                        <option value="fas fa-mobile-alt">Mobile</option>
+                                        <option value="fas fa-mouse">Mouse</option>
+                                        <option value="fas fa-gift">Gift</option>
+                                        <option value="fas fa-carrot">Carrot</option>
+                                        <option value="fas fa-apple-alt">Apple</option>
+                                        <option value="fas fa-seedling">Seedling</option>
+                                        <option value="fas fa-tshirt">T-shirt</option>
+                                        <option value="fas fa-drumstick-bite">Drumstick</option>
+                                        <option value="fas fa-utensils">Utensils</option>
+                                        <option value="fas fa-cookie-bite">Cookie</option>
+                                        <option value="fas fa-spa">Spa</option>
+                                        <option value="fas fa-blender">Blender</option>
+                                        <option value="fas fa-pizza-slice">Pizza</option>
+                                        <option value="fas fa-hamburger">Hamburger</option>
+                                        <option value="fas fa-fish">Fish</option>
+                                        <option value="fas fa-bread-slice">Bread</option>
+                                        <option value="fas fa-clock">Clock</option>
+                                        <option value="fas fa-gem">Gem</option>
+                                        <option value="fas fa-spray-can">Spray</option>
+                                        <option value="fas fa-shopping-bag">Bag</option>
+                                        <option value="fas fa-leaf">Leaf</option>
+                                        <option value="fas fa-pepper-hot">Pepper</option>
+                                        <option value="fas fa-lemon">Lemon</option>
+                                        <option value="fas fa-wine-glass">Wine</option>
+                                        <option value="fas fa-rose">Rose</option>
+                                        <option value="fas fa-sun">Sun</option>
+                                        <option value="fas fa-book">Book</option>
+                                    </select>
+                                </div>
+
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane me-2"></i>Submit for Approval
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkSellerAccess()) return;
+
+            document.getElementById('sp-add-feature').addEventListener('click', function() {
+                const container = document.getElementById('sp-features-container');
+                const div = document.createElement('div');
+                div.className = 'input-group mb-2';
+                div.innerHTML = `
+                    <input type="text" class="form-control" placeholder="Enter a key feature">
+                    <button type="button" class="btn btn-outline-danger" onclick="this.closest('.input-group').remove()">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+
+            document.getElementById('seller-product-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const features = [];
+                document.querySelectorAll('#sp-features-container input').forEach(i => {
+                    if (i.value.trim()) features.push(i.value.trim());
+                });
+
+                const imageDataUrl = window._spImageDataUrl || null;
+
+                const payload = {
+                    name: document.getElementById('spName').value.trim(),
+                    price: document.getElementById('spPrice').value.trim(),
+                    category: document.getElementById('spCategory').value,
+                    description: document.getElementById('spDescription').value.trim(),
+                    longDescription: document.getElementById('spLongDescription').value.trim(),
+                    icon: document.getElementById('spIcon').value,
+                    features: features,
+                    image: imageDataUrl
+                };
+
+                if (!payload.name || !payload.price || !payload.category || !payload.description || !payload.longDescription || !payload.icon || features.length === 0) {
+                    showAlert('Please fill in all required fields and add at least one feature.', 'danger');
+                    return;
+                }
+
+                try {
+                    submitProductForApproval(payload);
+                    showAlert('Product submitted! Awaiting admin approval.', 'success');
+                    this.reset();
+                } catch (err) {
+                    showAlert(err.message, 'danger');
+                }
+            });
+
+            // Image upload preview
+            const imgInput = document.getElementById('spImage');
+            if (imgInput) {
+                imgInput.addEventListener('change', function(e) {
+                    const file = e.target.files && e.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = function(ev) {
+                        const previewWrap = document.getElementById('sp-image-preview');
+                        const img = document.getElementById('sp-preview-img');
+                        img.src = ev.target.result;
+                        previewWrap.style.display = 'block';
+                        window._spImageDataUrl = ev.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+    </script>
+</body>
+<\html>
+
+

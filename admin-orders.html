@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Orders - Zomo Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="fas fa-crown me-2 text-warning"></i>Zomo Store
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Shop</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="tickets.html">Tickets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="chatbot.html">Assistant</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="cart.html">
+                            <i class="fas fa-shopping-cart"></i>
+                            Cart <span class="badge bg-secondary cart-count">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> <span class="user-name">Account</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="login-section">
+                                <a class="dropdown-item" href="login.html">Login</a>
+                            </li>
+                            <li class="login-section">
+                                <a class="dropdown-item" href="signup.html">Sign Up</a>
+                            </li>
+                            <li class="profile-section d-none">
+                                <a class="dropdown-item" href="profile.html">Profile</a>
+                            </li>
+                            <li class="profile-section d-none">
+                                <hr class="dropdown-divider">
+                            </li>
+                            <!-- Admin sections -->
+                            <li class="admin-section" style="display: none;">
+                                <a class="dropdown-item" href="admin-add-product.html">
+                                    <i class="fas fa-plus me-2"></i>Add Product
+                                </a>
+                            </li>
+                            <li class="admin-section" style="display: none;">
+                                <a class="dropdown-item" href="admin-manage-products.html">
+                                    <i class="fas fa-cog me-2"></i>Manage Products
+                                </a>
+                            </li>
+                            <li class="admin-section" style="display: none;">
+                                <a class="dropdown-item" href="admin-orders.html">
+                                    <i class="fas fa-clipboard-list me-2"></i>View Orders
+                                </a>
+                            </li>
+                            <li class="admin-section" style="display: none;">
+                                <a class="dropdown-item" href="admin-verify-products.html">
+                                    <i class="fas fa-check-circle me-2"></i>Verify Products
+                                </a>
+                            </li>
+                            <li class="admin-section" style="display: none;">
+                                <a class="dropdown-item" href="admin-delivery.html">
+                                    <i class="fas fa-truck me-2"></i>Manage Delivery
+                                </a>
+                            </li>
+                            <li class="admin-section" style="display: none;">
+                                <a class="dropdown-item" href="admin-international-procurement.html">
+                                    <i class="fas fa-globe me-2"></i>International Procurement
+                                </a>
+                            </li>
+                            <li class="admin-section" style="display: none;">
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li class="admin-section" style="display: none;">
+                                <a class="dropdown-item" href="#" onclick="adminLogout()">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Admin Logout
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li class="non-admin-section">
+                                <a class="dropdown-item" href="admin-login.html">
+                                    <i class="fas fa-shield-alt me-2"></i>Admin Login
+                                </a>
+                            </li>
+                            <li class="profile-section d-none">
+                                <a class="dropdown-item" href="#" onclick="logout()">Logout</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="bg-light py-3">
+        <div class="container">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="admin-login.html">Admin</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Orders Management</li>
+            </ol>
+        </div>
+    </nav>
+
+    <!-- Admin Orders Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="text-primary">
+                        <i class="fas fa-clipboard-list me-2"></i>Customer Orders
+                    </h2>
+                    <p class="text-muted">Manage and confirm customer orders</p>
+                </div>
+                <div class="admin-stats">
+                    <span class="badge bg-warning text-dark me-2">
+                        <i class="fas fa-clock me-1"></i>
+                        Pending: <span id="pending-count">0</span>
+                    </span>
+                    <span class="badge bg-success">
+                        <i class="fas fa-check me-1"></i>
+                        Confirmed: <span id="confirmed-count">0</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Orders Filter -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary active" onclick="filterOrders('all')">
+                            All Orders
+                        </button>
+                        <button type="button" class="btn btn-outline-warning" onclick="filterOrders('pending')">
+                            Pending
+                        </button>
+                        <button type="button" class="btn btn-outline-success" onclick="filterOrders('confirmed')">
+                            Confirmed
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" placeholder="Search orders..." id="order-search">
+                </div>
+            </div>
+
+            <!-- Orders List -->
+            <div id="orders-container">
+                <div class="text-center py-5" id="no-orders">
+                    <i class="fas fa-inbox display-1 text-muted mb-3"></i>
+                    <h4 class="text-muted">No orders found</h4>
+                    <p class="text-muted">Customer orders will appear here when they place orders.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Details Modal -->
+    <div class="modal fade" id="orderDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-receipt me-2"></i>Order Details
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-primary">Order Information</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Order ID:</strong></td>
+                                    <td id="modal-order-id"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Date:</strong></td>
+                                    <td id="modal-order-date"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Status:</strong></td>
+                                    <td id="modal-order-status"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Product:</strong></td>
+                                    <td id="modal-product-name"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Quantity:</strong></td>
+                                    <td id="modal-quantity"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total:</strong></td>
+                                    <td id="modal-total" class="fw-bold text-success"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-primary">Customer Information</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Name:</strong></td>
+                                    <td id="modal-customer-name"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email:</strong></td>
+                                    <td id="modal-customer-email"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Phone:</strong></td>
+                                    <td id="modal-customer-phone"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Address:</strong></td>
+                                    <td id="modal-customer-address"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="confirm-order-btn" onclick="confirmOrderFromModal()">
+                        <i class="fas fa-check me-2"></i>Confirm Order
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Zomo Store</h5>
+                    <p>Your trusted partner for premium electronics and gadgets.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-light">Shop</a></li>
+                        <li><a href="about.html" class="text-light">About Us</a></li>
+                        <li><a href="contact.html" class="text-light">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Follow Us</h5>
+                    <div class="social-links">
+                        <a href="#" class="text-light me-3"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p>&copy; 2025 Zomo Store. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Initialize admin orders page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check admin access
+            if (!checkAdminAccess()) {
+                return;
+            }
+            
+            loadAdminOrders();
+            updateCartCount();
+            
+            // Add search functionality
+            document.getElementById('order-search').addEventListener('input', searchOrders);
+        });
+    </script>
+</body>
+</html>
