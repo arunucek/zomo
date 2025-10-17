@@ -14,6 +14,7 @@ const STORAGE_KEYS = {
     PENDING_PRODUCTS: 'zomostore_pending_products',
     BOOKINGS: 'zomostore_bookings',
     DELIVERY_MEN: 'zomostore_delivery_men',
+    DELIVERY_USER: 'zomostore_delivery_user',
     CHAT_USER_NAME: 'zomostore_chat_user_name',
     COMPANY_CONNECTIONS: 'zomostore_company_connections'
 };
@@ -1236,6 +1237,39 @@ function getDeliveryMen() {
     return defaults;
 }
 
+// ============================================
+// DELIVERY USER AUTH (Login for delivery boy)
+// ============================================
+function getCurrentDeliveryUser() {
+    const u = localStorage.getItem(STORAGE_KEYS.DELIVERY_USER);
+    return u ? JSON.parse(u) : null;
+}
+
+function loginAsDelivery(email) {
+    const trimmed = (email || '').trim().toLowerCase();
+    if (!trimmed) throw new Error('Please enter delivery email');
+    const list = getDeliveryMen();
+    const match = list.find(p => (p.email || '').toLowerCase() === trimmed);
+    if (!match) throw new Error('Email not found. Ask admin to add your email.');
+    const deliveryUser = { id: match.id, name: match.name, email: trimmed, loginTime: new Date().toISOString() };
+    localStorage.setItem(STORAGE_KEYS.DELIVERY_USER, JSON.stringify(deliveryUser));
+    return deliveryUser;
+}
+
+function deliveryLogout() {
+    localStorage.removeItem(STORAGE_KEYS.DELIVERY_USER);
+}
+
+function requireDeliveryUser() {
+    const u = getCurrentDeliveryUser();
+    if (!u) {
+        showAlert('Delivery login required', 'warning');
+        setTimeout(() => { window.location.href = 'delivery-login.html'; }, 600);
+        return false;
+    }
+    return true;
+}
+
 function calculateEstimatedDelivery(selectedDate, deliveryType) {
     const deliveryDate = new Date(selectedDate);
     let estimatedTime = '';
@@ -1618,6 +1652,120 @@ function updateDeliveryStatus(orderId) {
     } else if (newStatus) {
         showAlert('Invalid status. Please use: confirmed, processing, out_for_delivery, or delivered', 'warning');
     }
+}
+
+function markOrderDelivered(orderId) {
+    const orders = getOrders();
+    const idx = orders.findIndex(o => o.id === orderId);
+    if (idx === -1) { showAlert('Order not found', 'danger'); return; }
+    orders[idx].status = 'delivered';
+    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
+    // Fire storage event for other tabs (admin page) to refresh
+    try { localStorage.setItem('orders_last_update', Date.now().toString()); } catch {}
+    showAlert('Order marked as delivered', 'success');
+    if (window.location.pathname.includes('delivery-home.html')) {
+        setTimeout(() => location.reload(), 400);
+    }
+}
+
+// Delivery app helpers
+function openDeliveryDetails(orderId) {
+    const order = getOrders().find(o => o.id === orderId);
+    if (!order) return;
+    const addr = order.customer?.address || '';
+    document.getElementById('dmod-order') && (document.getElementById('dmod-order').textContent = order.id);
+    document.getElementById('dmod-name') && (document.getElementById('dmod-name').textContent = (order.customer?.firstName || '') + ' ' + (order.customer?.lastName || ''));
+    document.getElementById('dmod-email') && (document.getElementById('dmod-email').textContent = order.customer?.email || '');
+    document.getElementById('dmod-phone') && (document.getElementById('dmod-phone').textContent = order.customer?.phone || '');
+    document.getElementById('dmod-address') && (document.getElementById('dmod-address').textContent = addr);
+    const mapUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(addr);
+    const link = document.getElementById('dmod-map'); if (link) link.href = mapUrl;
+    // Ensure Directions link always works (destination only by default)
+    const dir = document.getElementById('dmod-directions');
+    if (dir) dir.href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(addr)}&travelmode=driving`;
+    // Try to get current position for directions
+    const currEl = document.getElementById('dmod-currentloc');
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(pos){
+            const lat = pos.coords.latitude.toFixed(5);
+            const lng = pos.coords.longitude.toFixed(5);
+            if (currEl) currEl.textContent = `${lat}, ${lng}`;
+            const dir2 = document.getElementById('dmod-directions');
+            if (dir2) dir2.href = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lng}&destination=${encodeURIComponent(addr)}&travelmode=driving`;
+        }, function(){
+            if (currEl) currEl.textContent = 'Permission denied';
+            // keep destination-only link already set
+        });
+    }
+    const modalEl = document.getElementById('deliveryDetailsModal');
+    if (modalEl && window.bootstrap) new bootstrap.Modal(modalEl).show();
+}
+
+function startDelivery(orderId) {
+    const orders = getOrders();
+    const idx = orders.findIndex(o => o.id === orderId);
+    if (idx === -1) return;
+    orders[idx].status = 'out_for_delivery';
+    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
+    // Optimistically update the row UI immediately
+    const row = document.querySelector(`[data-order-id="${orderId}"]`);
+    const actionsCell = row ? row.querySelector('.actions-cell') : null;
+    if (row) {
+        const statusBadge = row.querySelector('td:nth-child(3) .badge');
+        if (statusBadge) statusBadge.className = 'badge bg-primary', statusBadge.textContent = 'out for delivery';
+        if (actionsCell) {
+            actionsCell.innerHTML = `<button class="btn btn-sm btn-outline-success me-2" onclick="completeDeliveryPrompt('${orderId}')"><i class=\"fas fa-check\"></i> Complete</button>
+                       <button class="btn btn-sm btn-outline-secondary" onclick="openDeliveryDetails('${orderId}')"><i class=\"fas fa-map\"></i> Details</button>`;
+        }
+    }
+    showAlert('Delivery accepted. Opening details…', 'success');
+    openDeliveryDetails(orderId);
+}
+
+function rejectAssignedDelivery(orderId) {
+    const reason = prompt('Reason for rejection (optional):');
+    const orders = getOrders();
+    const idx = orders.findIndex(o => o.id === orderId);
+    if (idx === -1) return;
+    // Auto-assign next available driver
+    const currentId = orders[idx].delivery?.assignedDeliveryMan?.id;
+    const men = getDeliveryMen();
+    const currentIndex = men.findIndex(m => m.id === currentId);
+    let next = null;
+    if (men.length > 0) {
+        const start = currentIndex >= 0 ? (currentIndex + 1) % men.length : 0;
+        for (let i = 0; i < men.length; i++) {
+            const candidate = men[(start + i) % men.length];
+            if (candidate && candidate.id !== currentId) { next = candidate; break; }
+        }
+    }
+    if (next) {
+        orders[idx].delivery = orders[idx].delivery || {};
+        orders[idx].delivery.assignedDeliveryMan = { id: next.id, name: next.name, phone: next.phone };
+        orders[idx].status = 'processing';
+        localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
+        // notify new driver
+        notifyDeliveryAssignment(next.id, orders[idx].id);
+        showAlert(`Assignment rejected. Reassigned to ${next.name}.`, 'info');
+    } else {
+        orders[idx].status = 'confirmed';
+        if (orders[idx].delivery) delete orders[idx].delivery.assignedDeliveryMan;
+        localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
+        showAlert('Assignment rejected. Waiting for admin to reassign.', 'info');
+    }
+    if (window.location.pathname.includes('delivery-home.html')) setTimeout(() => location.reload(), 300);
+}
+
+function completeDeliveryPrompt(orderId) {
+    const email = prompt('Enter customer email to confirm delivery:');
+    const order = getOrders().find(o => o.id === orderId);
+    if (!order) { showAlert('Order not found', 'danger'); return; }
+    const expected = (order.customer?.email || '').trim().toLowerCase();
+    if ((email || '').trim().toLowerCase() !== expected) {
+        showAlert('Email does not match. Delivery cannot be completed.', 'danger');
+        return;
+    }
+    markOrderDelivered(orderId);
 }
 
 // User Management Functions
@@ -2142,8 +2290,18 @@ function estimateDistanceBetweenCitiesKm(fromName, toName) {
 function capitalize(s) { try { return s.charAt(0).toUpperCase() + s.slice(1); } catch { return s; } }
 
 function getOrders() {
-    const orders = localStorage.getItem(STORAGE_KEYS.ORDERS);
-    return orders ? JSON.parse(orders) : [];
+    const current = localStorage.getItem(STORAGE_KEYS.ORDERS);
+    if (current) {
+        try { return JSON.parse(current); } catch { /* ignore */ }
+    }
+    // Fallback: migrate legacy key 'orders' -> STORAGE_KEYS.ORDERS
+    const legacy = localStorage.getItem('orders');
+    if (legacy) {
+        localStorage.setItem(STORAGE_KEYS.ORDERS, legacy);
+        localStorage.removeItem('orders');
+        try { return JSON.parse(legacy); } catch { return []; }
+    }
+    return [];
 }
 
 function loadOrderHistory() {
@@ -2194,11 +2352,23 @@ function createOrderCard(order) {
         }];
     }
     
+    // status badge mapping
+    const statusToBadge = (s) => {
+        switch (s) {
+            case 'pending': return '<span class="badge bg-warning text-dark">Pending</span>';
+            case 'confirmed': return '<span class="badge bg-success">Confirmed</span>';
+            case 'processing': return '<span class="badge bg-info text-dark">Processing</span>';
+            case 'out_for_delivery': return '<span class="badge bg-primary">Out for delivery</span>';
+            case 'delivered': return '<span class="badge bg-success">Delivered</span>';
+            default: return `<span class=\"badge bg-secondary\">${s}</span>`;
+        }
+    };
+
     div.innerHTML = `
         <div class="card-header d-flex justify-content-between align-items-center">
             <div>
                 <strong>Order #${order.id}</strong>
-                <span class="badge bg-success ms-2">${order.status}</span>
+                <span class="ms-2">${statusToBadge(order.status)}</span>
             </div>
             <small class="text-muted">${orderDate}</small>
         </div>
@@ -2219,9 +2389,10 @@ function createOrderCard(order) {
                     <div class="mb-2">
                         <strong>Total: $${order.totals ? order.totals.total.toFixed(2) : order.total.toFixed(2)}</strong>
                     </div>
-                    <button class="btn btn-outline-primary btn-sm" onclick="viewOrderDetails('${order.id}')">
-                        View Details
-                    </button>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-primary btn-sm" onclick="viewOrderDetails('${order.id}')">Details</button>
+                        ${order.delivery ? `<button class=\"btn btn-outline-success btn-sm\" onclick=\"trackOrderOnMap('${order.id}')\"><i class=\"fas fa-location-arrow\"></i> Track</button>` : ''}
+                    </div>
                 </div>
             </div>
             ${order.delivery ? `
@@ -2274,6 +2445,23 @@ Estimated Delivery: ${order.delivery.estimatedDelivery}`;
         }
         
         alert(`Order Details:\nOrder ID: ${order.id}\nDate: ${orderDate}\nTotal: $${orderTotal}\nStatus: ${order.status}${deliveryInfo}`);
+    }
+}
+
+function trackOrderOnMap(orderId) {
+    const orders = getOrders();
+    const order = orders.find(o => o.id === orderId);
+    if (!order || !order.customer || !order.customer.address) { showAlert('No address available for this order', 'warning'); return; }
+    const addr = order.customer.address;
+    let url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(addr)}&travelmode=driving`;
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(pos){
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+            window.open(`https://www.google.com/maps/dir/?api=1&origin=${lat},${lng}&destination=${encodeURIComponent(addr)}&travelmode=driving`, '_blank');
+        }, function(){ window.open(url, '_blank'); });
+    } else {
+        window.open(url, '_blank');
     }
 }
 
@@ -3304,7 +3492,16 @@ function getProductLocalImage(product) {
         'Bluetooth Speaker Pro': 'images/catalog/bluetooth_speaker_pro.png',
         'Premium Sushi Rice (5kg)': 'images/catalog/premium_sushi_rice.png',
         'Matcha Snack Pack': 'images/catalog/matcha_snack_pack.png',
-        'Eco Kettle': 'images/catalog/eco_kettle.png'
+        'Eco Kettle': 'images/catalog/eco_kettle.png',
+
+        // Curated product images (non-random, public product shots)
+        // Samsung Electronics
+        'Galaxy S24 Ultra': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Samsung_Galaxy_S24_Ultra.png/640px-Samsung_Galaxy_S24_Ultra.png',
+        'Galaxy Z Fold 5': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Samsung_Galaxy_Z_Fold5.png/640px-Samsung_Galaxy_Z_Fold5.png',
+        'Galaxy Watch 6': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Samsung_Galaxy_Watch6.png/640px-Samsung_Galaxy_Watch6.png',
+        'Galaxy Buds 2 Pro': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Samsung_Galaxy_Buds2_Pro.png/640px-Samsung_Galaxy_Buds2_Pro.png',
+        'Galaxy Tab S9': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Samsung_Galaxy_Tab_S9.png/640px-Samsung_Galaxy_Tab_S9.png',
+        'Samsung QLED TV 65"': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Samsung_QLED_TV.png/640px-Samsung_QLED_TV.png'
     };
     
     // If we have a legacy mapping, use it, otherwise generate placeholder
@@ -3499,6 +3696,7 @@ window.openCompanyProductsModal = function(companyName) {
         col.innerHTML = `
             <div class="card h-100">
                 <img src="${localImg}" class="card-img-top" alt="${p.name}" style="height: 140px; object-fit: cover;" 
+                     loading="lazy" decoding="async" width="100%" height="140"
                      data-category="${p.category}" data-product-name="${p.name}" 
                      onerror="handleImageError(this)">
                 <div class="card-body">
@@ -3670,6 +3868,13 @@ function submitOrder(event) {
     const customerEmail = document.getElementById('customerEmail').value.trim();
     const customerPhone = document.getElementById('customerPhone').value.trim();
     const customerAddress = document.getElementById('customerAddress').value.trim();
+    const paymentMethod = (document.querySelector('input[name="paymentMethod"]:checked') || { value: 'cod' }).value;
+    const card = {
+        number: (document.getElementById('payCardNumber') || {}).value || '',
+        expiry: (document.getElementById('payCardExpiry') || {}).value || '',
+        cvv: (document.getElementById('payCardCvv') || {}).value || ''
+    };
+    const upiId = (document.getElementById('payUpiId') || {}).value || '';
     
     // Validation
     if (!customerName || !customerEmail || !customerPhone || !customerAddress) {
@@ -3684,6 +3889,20 @@ function submitOrder(event) {
         return;
     }
     
+    // Basic payment validation (demo only)
+    if (paymentMethod === 'card') {
+        if (!card.number || !card.expiry || !card.cvv) {
+            showAlert('Please enter complete card details.', 'warning');
+            return;
+        }
+    }
+    if (paymentMethod === 'upi') {
+        if (!upiId || !upiId.includes('@')) {
+            showAlert('Please enter a valid UPI ID (e.g., name@bank).', 'warning');
+            return;
+        }
+    }
+
     // Create order object
     const order = {
         id: 'ORD-' + Date.now(),
@@ -3700,7 +3919,8 @@ function submitOrder(event) {
         },
         status: 'pending',
         orderDate: new Date().toISOString(),
-        confirmedDate: null
+        confirmedDate: null,
+        payment: { method: paymentMethod, status: paymentMethod === 'cod' ? 'pending' : 'paid' }
     };
     
     // Save order to localStorage
@@ -3720,13 +3940,39 @@ function submitOrder(event) {
 }
 
 function saveOrder(order) {
-    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    // Prefer unified storage key; migrate legacy if present
+    let orders = [];
+    const unified = localStorage.getItem(STORAGE_KEYS.ORDERS);
+    if (unified) {
+        try { orders = JSON.parse(unified) || []; } catch { orders = []; }
+    } else {
+        const legacy = localStorage.getItem('orders');
+        if (legacy) {
+            try { orders = JSON.parse(legacy) || []; } catch { orders = []; }
+        }
+    }
     orders.push(order);
-    localStorage.setItem('orders', JSON.stringify(orders));
+    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
+    try { localStorage.setItem('orders_last_update', Date.now().toString()); } catch {}
 }
 
 function getOrders() {
-    return JSON.parse(localStorage.getItem('orders')) || [];
+    // Try unified key first
+    const unified = localStorage.getItem(STORAGE_KEYS.ORDERS);
+    if (unified) {
+        try { return JSON.parse(unified) || []; } catch { /* fallthrough */ }
+    }
+    // Migrate from any legacy keys
+    const legacyA = localStorage.getItem('unicart_orders');
+    const legacyB = localStorage.getItem('orders');
+    const legacy = legacyA || legacyB;
+    if (legacy) {
+        localStorage.setItem(STORAGE_KEYS.ORDERS, legacy);
+        if (legacyA) localStorage.removeItem('unicart_orders');
+        if (legacyB) localStorage.removeItem('orders');
+        try { return JSON.parse(legacy) || []; } catch { return []; }
+    }
+    return [];
 }
 
 function updateOrderStatus(orderId, status, confirmedDate = null) {
@@ -3738,7 +3984,7 @@ function updateOrderStatus(orderId, status, confirmedDate = null) {
         if (confirmedDate) {
             orders[orderIndex].confirmedDate = confirmedDate;
         }
-        localStorage.setItem('orders', JSON.stringify(orders));
+        localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
         return true;
     }
     return false;
@@ -3794,10 +4040,31 @@ function displayOrders(orders) {
     
     const ordersHTML = orders.map(order => {
         const orderDate = new Date(order.orderDate).toLocaleDateString();
-        const statusBadge = order.status === 'confirmed' 
-            ? '<span class="badge bg-success">Confirmed</span>' 
-            : '<span class="badge bg-warning text-dark">Pending</span>';
+        let statusBadge = '<span class="badge bg-secondary">Unknown</span>';
+        switch (order.status) {
+            case 'pending':
+                statusBadge = '<span class="badge bg-warning text-dark">Pending</span>';
+                break;
+            case 'confirmed':
+                statusBadge = '<span class="badge bg-success">Confirmed</span>';
+                break;
+            case 'processing':
+                statusBadge = '<span class="badge bg-info text-dark">Processing</span>';
+                break;
+            case 'out_for_delivery':
+                statusBadge = '<span class="badge bg-primary">Out for delivery</span>';
+                break;
+            case 'delivered':
+                statusBadge = '<span class="badge bg-success">Delivered</span>';
+                break;
+        }
         
+        const assigned = order.delivery && order.delivery.assignedDeliveryMan ? `${order.delivery.assignedDeliveryMan.name}` : '—';
+        const assignBtn = order.status === 'confirmed' && !(order.delivery && order.delivery.assignedDeliveryMan)
+            ? `<button class="btn btn-outline-secondary btn-sm" onclick="promptAssignOrder('${order.id}')">
+                   <i class=\"fas fa-truck\"></i> Assign
+               </button>`
+            : (order.delivery && order.delivery.assignedDeliveryMan ? `<span class="text-muted"><i class=\"fas fa-truck\"></i> ${assigned}</span>` : '');
         return `
             <div class="card mb-3 order-card" data-status="${order.status}">
                 <div class="card-body">
@@ -3832,6 +4099,7 @@ function displayOrders(orders) {
                                 </button>` : 
                                 `<span class="text-success"><i class="fas fa-check-circle"></i> Confirmed</span>`
                             }
+                            ${assignBtn}
                         </div>
                     </div>
                 </div>
@@ -3923,6 +4191,8 @@ function confirmOrder(orderId) {
     if (success) {
         showAlert('Order confirmed successfully!', 'success');
         loadAdminOrders(); // Refresh the orders list
+        // Immediately prompt admin to assign a delivery person
+        setTimeout(() => { promptAssignOrder(orderId); }, 300);
     } else {
         showAlert('Failed to confirm order.', 'danger');
     }
@@ -3937,6 +4207,60 @@ function confirmOrderFromModal() {
     // Close modal
     const modal = bootstrap.Modal.getInstance(document.getElementById('orderDetailsModal'));
     modal.hide();
+}
+
+// ===== Assignment helpers =====
+function promptAssignOrder(orderId) {
+    const men = getDeliveryMen();
+    if (!men || men.length === 0) { showAlert('No delivery personnel available. Add in Delivery page.', 'warning'); return; }
+    const options = men.map(m => `${m.id} - ${m.name}${m.email ? ' <'+m.email+'>' : ''}`).join('\n');
+    const input = prompt(`Assign order ${orderId} to (enter ID or email):\n\n${options}`);
+    if (!input) return;
+    const trimmed = input.trim().toLowerCase();
+    const selected = men.find(m => m.id.toLowerCase() === trimmed || (m.email||'').toLowerCase() === trimmed);
+    if (!selected) { showAlert('No matching delivery person found', 'danger'); return; }
+    assignOrderToDelivery(orderId, selected.id);
+}
+
+function assignOrderToDelivery(orderId, deliveryId) {
+    const men = getDeliveryMen();
+    const person = men.find(m => m.id === deliveryId);
+    if (!person) { showAlert('Delivery person not found', 'danger'); return; }
+    let orders = getOrders();
+    const idx = orders.findIndex(o => o.id === orderId);
+    if (idx === -1) { showAlert('Order not found', 'danger'); return; }
+    const assignedAt = new Date().toISOString();
+    orders[idx].delivery = orders[idx].delivery || {};
+    orders[idx].delivery.assignedDeliveryMan = { id: person.id, name: person.name, phone: person.phone };
+    orders[idx].delivery.assignedAt = assignedAt;
+    if (orders[idx].status === 'confirmed') orders[idx].status = 'processing';
+    localStorage.setItem('orders', JSON.stringify(orders));
+    // Notify the driver
+    notifyDeliveryAssignment(person.id, orders[idx].id);
+    showAlert(`Assigned order ${orderId} to ${person.name}`, 'success');
+    loadAdminOrders();
+}
+
+function notifyDeliveryAssignment(deliveryId, orderId) {
+    const key = `delivery_notify_${deliveryId}`;
+    const list = JSON.parse(localStorage.getItem(key) || '[]');
+    list.push({ orderId, at: new Date().toISOString() });
+    localStorage.setItem(key, JSON.stringify(list));
+}
+
+// Auto-assign the first unassigned confirmed order to the currently logged-in delivery user
+function autoAssignForCurrentDeliveryUser() {
+    const user = getCurrentDeliveryUser();
+    if (!user) return false;
+    const orders = getOrders();
+    const targetIdx = orders.findIndex(o => o.status === 'confirmed' && (!o.delivery || !o.delivery.assignedDeliveryMan));
+    if (targetIdx === -1) return false;
+    orders[targetIdx].delivery = orders[targetIdx].delivery || {};
+    orders[targetIdx].delivery.assignedDeliveryMan = { id: user.id, name: user.name };
+    orders[targetIdx].status = 'processing';
+    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
+    notifyDeliveryAssignment(user.id, orders[targetIdx].id);
+    return true;
 }
 
 // ============================================

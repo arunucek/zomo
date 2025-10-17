@@ -12,7 +12,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold" href="index.html">
-                <i class="fas fa-crown me-2"></i>Zomo Store
+                <i class="fas fa-crown me-2"></i>Unicart
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -92,6 +92,11 @@
                                 <div class="mb-3">
                                     <label class="form-label">Image URL</label>
                                     <input type="text" class="form-control" id="intlImage" placeholder="Optional product image URL">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Or upload image from your computer</label>
+                                    <input type="file" class="form-control" id="intlImageFile" accept="image/*">
+                                    <img id="intlImagePreview" alt="Preview" class="img-thumbnail mt-2" style="display: none; max-height: 140px;">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Reference/Invoice ID</label>

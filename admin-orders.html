@@ -303,6 +303,13 @@
             
             // Add search functionality
             document.getElementById('order-search').addEventListener('input', searchOrders);
+
+            // Auto-refresh when orders change (delivery marks delivered)
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'orders_last_update' || e.key === 'unicart_orders' || e.key === 'zomostore_orders') {
+                    loadAdminOrders();
+                }
+            });
         });
     </script>
 </body>
