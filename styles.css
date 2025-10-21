@@ -25,6 +25,103 @@ body {
     line-height: 1.6;
 }
 
+/* Payment Method Styles */
+.payment-method-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.payment-method-card:hover .payment-option {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.payment-method-card.selected .payment-option {
+    border-color: var(--primary-color) !important;
+    background-color: rgba(107, 70, 193, 0.05);
+    box-shadow: 0 4px 15px rgba(107, 70, 193, 0.2);
+}
+
+.payment-option {
+    transition: all 0.3s ease;
+    border: 2px solid #e5e7eb;
+}
+
+.payment-option:hover {
+    border-color: var(--primary-color);
+}
+
+.payment-form {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card-icons img {
+    height: 24px;
+    width: auto;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.card-icons img:hover {
+    opacity: 1;
+}
+
+/* UPI QR Code Styles */
+#qrCodeContainer {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+#qrCode {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* Payment Security Styles */
+.payment-security {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-left: 4px solid var(--success-color);
+}
+
+/* Enhanced Form Styles */
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(107, 70, 193, 0.25);
+}
+
+.input-group-text {
+    background-color: #f8fafc;
+    border-color: #e5e7eb;
+    color: var(--dark-gray);
+}
+
+/* Payment Method Icons */
+.payment-method-card i {
+    transition: all 0.3s ease;
+}
+
+.payment-method-card:hover i {
+    transform: scale(1.1);
+}
+
+.payment-method-card.selected i {
+    color: var(--primary-color) !important;
+}
+
 /* Bootstrap Color Overrides */
 .bg-primary {
     background-color: var(--primary-color) !important;

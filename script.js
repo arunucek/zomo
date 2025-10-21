@@ -560,6 +560,12 @@ function saveCart(cart) {
 }
 
 function addToCart(productId, quantity = 1) {
+    // Check if user is logged in
+    if (!isUserLoggedIn()) {
+        showLoginRequiredAlert('You need to login to add items to cart');
+        return;
+    }
+
     const products = getStoredProducts();
     const product = products.find(p => p.id === productId);
     if (!product) {
@@ -989,6 +995,12 @@ function updateCartTotals() {
 }
 
 function proceedToCheckout() {
+    // Check if user is logged in
+    if (!isUserLoggedIn()) {
+        showLoginRequiredAlert('You need to login to proceed with checkout');
+        return;
+    }
+    
     const cart = getCart();
     if (cart.length === 0) {
         showAlert('Your cart is empty!', 'warning');
@@ -1772,6 +1784,67 @@ function completeDeliveryPrompt(orderId) {
 function getCurrentUser() {
     const user = localStorage.getItem(STORAGE_KEYS.USER);
     return user ? JSON.parse(user) : null;
+}
+
+function isUserLoggedIn() {
+    const user = getCurrentUser();
+    const isLoggedIn = user !== null && user.email && (user.name || (user.firstName && user.lastName));
+    
+    // Debug logging (remove in production)
+    console.log('isUserLoggedIn check:', {
+        user: user,
+        hasEmail: user ? !!user.email : false,
+        hasName: user ? !!user.name : false,
+        hasFirstName: user ? !!user.firstName : false,
+        hasLastName: user ? !!user.lastName : false,
+        isLoggedIn: isLoggedIn
+    });
+    
+    return isLoggedIn;
+}
+
+function showLoginRequiredAlert(message) {
+    // Create a custom alert with login options
+    const alertHtml = `
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle me-3 fa-2x"></i>
+                <div class="flex-grow-1">
+                    <h5 class="alert-heading mb-2">Login Required</h5>
+                    <p class="mb-3">${message}</p>
+                    <div class="d-flex gap-2">
+                        <a href="login.html" class="btn btn-primary btn-sm">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </a>
+                        <a href="signup.html" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-user-plus me-1"></i>Sign Up
+                        </a>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="alert">
+                            <i class="fas fa-times me-1"></i>Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove any existing login alerts
+    const existingAlert = document.querySelector('.alert-warning');
+    if (existingAlert) {
+        existingAlert.remove();
+    }
+    
+    // Add the alert to the page
+    const container = document.querySelector('.container') || document.querySelector('main') || document.body;
+    container.insertAdjacentHTML('afterbegin', alertHtml);
+    
+    // Auto-remove after 10 seconds
+    setTimeout(() => {
+        const alert = document.querySelector('.alert-warning');
+        if (alert) {
+            alert.remove();
+        }
+    }, 10000);
 }
 
 function saveUser(user) {
@@ -3810,6 +3883,12 @@ document.addEventListener('DOMContentLoaded', function() {
 // ============================================
 
 function showBuyNowModal() {
+    // Check if user is logged in
+    if (!isUserLoggedIn()) {
+        showLoginRequiredAlert('You need to login to purchase products');
+        return;
+    }
+    
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
     
@@ -3849,6 +3928,12 @@ function showBuyNowModal() {
 
 function submitOrder(event) {
     event.preventDefault();
+    
+    // Check if user is logged in
+    if (!isUserLoggedIn()) {
+        showLoginRequiredAlert('You need to login to purchase products');
+        return;
+    }
     
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');

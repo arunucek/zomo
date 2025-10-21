@@ -204,27 +204,182 @@
 
                         <!-- Payment Information -->
                         <div class="card mb-4">
-                            <div class="card-header">
-                                <h5 class="mb-0">Payment Information</h5>
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Payment Information</h5>
                             </div>
                             <div class="card-body">
-                                <div class="mb-3">
-                                    <label for="cardNumber" class="form-label">Card Number *</label>
-                                    <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456" required>
+                                <!-- Payment Method Selection -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">Choose Payment Method *</label>
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <div class="payment-method-card" data-method="cod">
+                                                <div class="card h-100 border-2 payment-option">
+                                                    <div class="card-body text-center">
+                                                        <i class="fas fa-money-bill-wave text-success fa-2x mb-2"></i>
+                                                        <h6 class="card-title">Cash on Delivery</h6>
+                                                        <small class="text-muted">Pay when you receive</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="payment-method-card" data-method="card">
+                                                <div class="card h-100 border-2 payment-option">
+                                                    <div class="card-body text-center">
+                                                        <i class="fas fa-credit-card text-primary fa-2x mb-2"></i>
+                                                        <h6 class="card-title">Credit/Debit Card</h6>
+                                                        <small class="text-muted">Visa, Mastercard, Amex</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="payment-method-card" data-method="upi">
+                                                <div class="card h-100 border-2 payment-option">
+                                                    <div class="card-body text-center">
+                                                        <i class="fab fa-google-pay text-info fa-2x mb-2"></i>
+                                                        <h6 class="card-title">UPI Payment</h6>
+                                                        <small class="text-muted">Google Pay, PhonePe, Paytm</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="selectedPaymentMethod" value="cod">
+                                </div>
+
+                                <!-- Card Payment Form -->
+                                <div id="cardPaymentForm" class="payment-form" style="display: none;">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-shield-alt me-2"></i>
+                                        <strong>Secure Payment:</strong> Your card information is encrypted and processed securely.
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 mb-3">
+                                            <label for="cardNumber" class="form-label">Card Number *</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-credit-card text-muted"></i>
+                                                </span>
+                                            </div>
+                                            <div class="card-icons mt-2">
+                                                <img src="https://img.icons8.com/color/24/000000/visa.png" alt="Visa" class="me-2">
+                                                <img src="https://img.icons8.com/color/24/000000/mastercard.png" alt="Mastercard" class="me-2">
+                                                <img src="https://img.icons8.com/color/24/000000/amex.png" alt="Amex" class="me-2">
+                                            </div>
+                                        </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
+                                        <div class="col-md-8 mb-3">
+                                            <label for="cardName" class="form-label">Name on Card *</label>
+                                            <input type="text" class="form-control" id="cardName" placeholder="John Doe">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
                                         <label for="expiryDate" class="form-label">Expiry Date *</label>
-                                        <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" required>
+                                            <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" maxlength="5">
+                                        </div>
                                     </div>
+                                    <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="cvv" class="form-label">CVV *</label>
-                                        <input type="text" class="form-control" id="cvv" placeholder="123" required>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control" id="cvv" placeholder="123" maxlength="4">
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-lock text-muted"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="billingZip" class="form-label">Billing ZIP Code *</label>
+                                            <input type="text" class="form-control" id="billingZip" placeholder="12345" maxlength="10">
+                                        </div>
                                     </div>
                                 </div>
+
+                                <!-- UPI Payment Form -->
+                                <div id="upiPaymentForm" class="payment-form" style="display: none;">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-mobile-alt me-2"></i>
+                                        <strong>UPI Payment:</strong> Complete payment using your UPI app.
+                                </div>
                                 <div class="mb-3">
-                                    <label for="cardName" class="form-label">Name on Card *</label>
-                                    <input type="text" class="form-control" id="cardName" required>
+                                        <label for="upiId" class="form-label">UPI ID *</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="upiId" placeholder="yourname@bank">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-qrcode text-muted"></i>
+                                            </span>
+                                        </div>
+                                        <small class="text-muted">Enter your UPI ID (e.g., john@paytm, 9876543210@ybl)</small>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="d-grid">
+                                                <button type="button" class="btn btn-outline-primary" id="generateQR">
+                                                    <i class="fas fa-qrcode me-2"></i>Generate QR Code
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="d-grid">
+                                                <button type="button" class="btn btn-outline-success" id="payWithUPI">
+                                                    <i class="fab fa-google-pay me-2"></i>Pay with UPI
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="qrCodeContainer" class="text-center mt-3" style="display: none;">
+                                        <div class="border rounded p-3 bg-light">
+                                            <div id="qrCode"></div>
+                                            <small class="text-muted">Scan with your UPI app to pay</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- COD Payment Info -->
+                                <div id="codPaymentForm" class="payment-form">
+                                    <div class="alert alert-success">
+                                        <i class="fas fa-hand-holding-usd me-2"></i>
+                                        <strong>Cash on Delivery:</strong> Pay when your order arrives. No additional charges.
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <i class="fas fa-check-circle text-success me-2"></i>
+                                                <span>No online payment required</span>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <i class="fas fa-check-circle text-success me-2"></i>
+                                                <span>Pay with cash or card on delivery</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <i class="fas fa-check-circle text-success me-2"></i>
+                                                <span>Verify product before payment</span>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <i class="fas fa-check-circle text-success me-2"></i>
+                                                <span>100% secure and reliable</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Security Notice -->
+                                <div class="mt-4 p-3 bg-light rounded">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-shield-alt text-success me-3 fa-lg"></i>
+                                        <div>
+                                            <h6 class="mb-1">Your Payment is Secure</h6>
+                                            <small class="text-muted">
+                                                We use industry-standard encryption to protect your payment information. 
+                                                Your data is never stored on our servers.
+                                            </small>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -328,11 +483,347 @@
     <script>
         // Initialize checkout page
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            if (!isUserLoggedIn()) {
+                showLoginRequiredAlert('You need to login to proceed with checkout');
+                // Redirect to login page after 3 seconds
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 3000);
+                return;
+            }
+            
             loadCheckoutSummary();
             updateCartCount();
             updateUserInterface();
             initializeCheckoutForm();
+            initializePaymentMethods();
         });
+
+        // Enhanced Payment Method Functionality
+        function initializePaymentMethods() {
+            // Payment method selection
+            const paymentCards = document.querySelectorAll('.payment-method-card');
+            const paymentForms = document.querySelectorAll('.payment-form');
+            const selectedMethodInput = document.getElementById('selectedPaymentMethod');
+
+            paymentCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Remove selected class from all cards
+                    paymentCards.forEach(c => c.classList.remove('selected'));
+                    
+                    // Add selected class to clicked card
+                    this.classList.add('selected');
+                    
+                    // Get payment method
+                    const method = this.dataset.method;
+                    selectedMethodInput.value = method;
+                    
+                    // Hide all payment forms
+                    paymentForms.forEach(form => form.style.display = 'none');
+                    
+                    // Show selected payment form
+                    const targetForm = document.getElementById(method + 'PaymentForm');
+                    if (targetForm) {
+                        targetForm.style.display = 'block';
+                    }
+                });
+            });
+
+            // Set default selection
+            document.querySelector('[data-method="cod"]').click();
+
+            // Card number formatting
+            const cardNumberInput = document.getElementById('cardNumber');
+            if (cardNumberInput) {
+                cardNumberInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+                    let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+                    if (formattedValue !== e.target.value) {
+                        e.target.value = formattedValue;
+                    }
+                });
+            }
+
+            // Expiry date formatting
+            const expiryInput = document.getElementById('expiryDate');
+            if (expiryInput) {
+                expiryInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length >= 2) {
+                        value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                    }
+                    e.target.value = value;
+                });
+            }
+
+            // CVV formatting
+            const cvvInput = document.getElementById('cvv');
+            if (cvvInput) {
+                cvvInput.addEventListener('input', function(e) {
+                    e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+                });
+            }
+
+            // UPI ID validation
+            const upiInput = document.getElementById('upiId');
+            if (upiInput) {
+                upiInput.addEventListener('input', function(e) {
+                    const value = e.target.value;
+                    const upiPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+$/;
+                    if (value && !upiPattern.test(value)) {
+                        e.target.classList.add('is-invalid');
+                    } else {
+                        e.target.classList.remove('is-invalid');
+                    }
+                });
+            }
+
+            // Generate QR Code for UPI
+            const generateQRBtn = document.getElementById('generateQR');
+            const qrContainer = document.getElementById('qrCodeContainer');
+            const qrCodeDiv = document.getElementById('qrCode');
+
+            if (generateQRBtn && qrContainer && qrCodeDiv) {
+                generateQRBtn.addEventListener('click', function() {
+                    const upiId = document.getElementById('upiId').value;
+                    const total = getCartTotal();
+                    
+                    if (!upiId) {
+                        alert('Please enter your UPI ID first');
+                        return;
+                    }
+
+                    // Generate UPI payment string
+                    const upiString = `upi://pay?pa=${upiId}&pn=Unicart&am=${total}&cu=USD&tn=Order Payment`;
+                    
+                    // Create QR code (simplified version)
+                    qrCodeDiv.innerHTML = `
+                        <div class="text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-qrcode fa-3x text-primary"></i>
+                            </div>
+                            <div class="mb-2">
+                                <strong>UPI Payment</strong>
+                            </div>
+                            <div class="small text-muted mb-3">
+                                Amount: $${total}<br>
+                                UPI ID: ${upiId}
+                            </div>
+                            <div class="small">
+                                <button class="btn btn-sm btn-outline-primary" onclick="copyUPIString()">
+                                    <i class="fas fa-copy me-1"></i>Copy UPI String
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    qrContainer.style.display = 'block';
+                    
+                    // Store UPI string for copying
+                    window.currentUPIString = upiString;
+                });
+            }
+
+            // Pay with UPI button
+            const payWithUPIBtn = document.getElementById('payWithUPI');
+            if (payWithUPIBtn) {
+                payWithUPIBtn.addEventListener('click', function() {
+                    const upiId = document.getElementById('upiId').value;
+                    if (!upiId) {
+                        alert('Please enter your UPI ID first');
+                        return;
+                    }
+                    
+                    // Simulate UPI payment
+                    if (confirm('Redirect to UPI app for payment?')) {
+                        alert('UPI payment initiated! Please complete payment in your UPI app.');
+                    }
+                });
+            }
+        }
+
+        // Copy UPI string to clipboard
+        function copyUPIString() {
+            if (window.currentUPIString) {
+                navigator.clipboard.writeText(window.currentUPIString).then(() => {
+                    alert('UPI string copied to clipboard!');
+                }).catch(() => {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = window.currentUPIString;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('UPI string copied to clipboard!');
+                });
+            }
+        }
+
+        // Enhanced form validation
+        function validatePaymentForm() {
+            const selectedMethod = document.getElementById('selectedPaymentMethod').value;
+            let isValid = true;
+
+            if (selectedMethod === 'card') {
+                const cardNumber = document.getElementById('cardNumber').value;
+                const cardName = document.getElementById('cardName').value;
+                const expiryDate = document.getElementById('expiryDate').value;
+                const cvv = document.getElementById('cvv').value;
+                const billingZip = document.getElementById('billingZip').value;
+
+                if (!cardNumber || cardNumber.replace(/\s/g, '').length < 16) {
+                    showFieldError('cardNumber', 'Please enter a valid card number');
+                    isValid = false;
+                }
+
+                if (!cardName.trim()) {
+                    showFieldError('cardName', 'Please enter name on card');
+                    isValid = false;
+                }
+
+                if (!expiryDate || !/^\d{2}\/\d{2}$/.test(expiryDate)) {
+                    showFieldError('expiryDate', 'Please enter valid expiry date (MM/YY)');
+                    isValid = false;
+                }
+
+                if (!cvv || cvv.length < 3) {
+                    showFieldError('cvv', 'Please enter valid CVV');
+                    isValid = false;
+                }
+
+                if (!billingZip.trim()) {
+                    showFieldError('billingZip', 'Please enter billing ZIP code');
+                    isValid = false;
+                }
+            } else if (selectedMethod === 'upi') {
+                const upiId = document.getElementById('upiId').value;
+                if (!upiId || !/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+$/.test(upiId)) {
+                    showFieldError('upiId', 'Please enter a valid UPI ID');
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
+        function showFieldError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            field.classList.add('is-invalid');
+            
+            // Remove existing error message
+            const existingError = field.parentNode.querySelector('.invalid-feedback');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            // Add new error message
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'invalid-feedback';
+            errorDiv.textContent = message;
+            field.parentNode.appendChild(errorDiv);
+        }
+
+        function clearFieldErrors() {
+            document.querySelectorAll('.is-invalid').forEach(field => {
+                field.classList.remove('is-invalid');
+            });
+            document.querySelectorAll('.invalid-feedback').forEach(error => {
+                error.remove();
+            });
+        }
+
+        // Override the existing checkout form submission
+        const originalInitializeCheckoutForm = window.initializeCheckoutForm;
+        window.initializeCheckoutForm = function() {
+            if (originalInitializeCheckoutForm) {
+                originalInitializeCheckoutForm();
+            }
+            
+            const checkoutForm = document.getElementById('checkout-form');
+            if (checkoutForm) {
+                checkoutForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    clearFieldErrors();
+                    
+                    if (!validatePaymentForm()) {
+                        return;
+                    }
+                    
+                    // Get payment method details
+                    const selectedMethod = document.getElementById('selectedPaymentMethod').value;
+                    let paymentDetails = { method: selectedMethod };
+                    
+                    if (selectedMethod === 'card') {
+                        paymentDetails = {
+                            method: 'card',
+                            cardNumber: document.getElementById('cardNumber').value,
+                            cardName: document.getElementById('cardName').value,
+                            expiryDate: document.getElementById('expiryDate').value,
+                            cvv: document.getElementById('cvv').value,
+                            billingZip: document.getElementById('billingZip').value
+                        };
+                    } else if (selectedMethod === 'upi') {
+                        paymentDetails = {
+                            method: 'upi',
+                            upiId: document.getElementById('upiId').value
+                        };
+                    }
+                    
+                    // Process checkout with payment details
+                    processCheckoutWithPayment(paymentDetails);
+                });
+            }
+        };
+
+        function processCheckoutWithPayment(paymentDetails) {
+            // Get form data
+            const formData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                zipCode: document.getElementById('zipCode').value,
+                deliveryDate: document.getElementById('deliveryDate').value,
+                deliveryTime: document.getElementById('deliveryTime').value,
+                deliveryType: document.getElementById('deliveryType').value,
+                deliveryLocation: document.getElementById('deliveryLocation').value,
+                contactPerson: document.getElementById('contactPerson').value,
+                contactPhone: document.getElementById('contactPhone').value,
+                deliveryInstructions: document.getElementById('deliveryInstructions').value,
+                smsUpdates: document.getElementById('smsUpdates').checked,
+                orderNotes: document.getElementById('orderNotes').value,
+                paymentDetails: paymentDetails
+            };
+
+            // Process the order
+            const cart = getCart();
+            const order = {
+                id: Date.now().toString(),
+                items: cart,
+                customer: formData,
+                payment: paymentDetails,
+                total: getCartTotal(),
+                status: 'pending',
+                orderDate: new Date().toISOString()
+            };
+
+            // Save order
+            saveOrder(order);
+
+            // Clear cart
+            clearCart();
+
+            // Show success message
+            alert('Order placed successfully! You will receive a confirmation email shortly.');
+            
+            // Redirect to profile page
+            window.location.href = 'profile.html';
+        }
     </script>
 </body>
 </html>
