@@ -988,10 +988,10 @@ function updateCartTotals() {
     const taxElement = document.getElementById('tax-amount');
     const totalElement = document.getElementById('cart-total');
 
-    if (subtotalElement) subtotalElement.textContent = `$${totals.subtotal}`;
-    if (shippingElement) shippingElement.textContent = `$${totals.shipping}`;
-    if (taxElement) taxElement.textContent = `$${totals.tax}`;
-    if (totalElement) totalElement.textContent = `$${totals.total}`;
+    if (subtotalElement) subtotalElement.textContent = `${totals.subtotal}`;
+    if (shippingElement) shippingElement.textContent = `${totals.shipping}`;
+    if (taxElement) taxElement.textContent = `${totals.tax}`;
+    if (totalElement) totalElement.textContent = `${totals.total}`;
 }
 
 function proceedToCheckout() {
@@ -1351,10 +1351,10 @@ function updateCheckoutTotalsWithDelivery() {
     const taxElement = document.getElementById('checkout-tax');
     const totalElement = document.getElementById('checkout-total');
     
-    if (subtotalElement) subtotalElement.textContent = `$${totals.subtotal}`;
-    if (shippingElement) shippingElement.textContent = `$${totals.shipping}`;
-    if (taxElement) taxElement.textContent = `$${totals.tax}`;
-    if (totalElement) totalElement.textContent = `$${totals.total}`;
+    if (subtotalElement) subtotalElement.textContent = `${totals.subtotal}`;
+    if (shippingElement) shippingElement.textContent = `${totals.shipping}`;
+    if (taxElement) taxElement.textContent = `${totals.tax}`;
+    if (totalElement) totalElement.textContent = `${totals.total}`;
 }
 
 // Admin Delivery Management Functions
@@ -2291,7 +2291,26 @@ function normalizeCityName(name) {
         'kachipuram': 'kanchipuram',
         'kancheepuram': 'kanchipuram',
         'thiruvannamalai': 'tiruvannamalai',
-        'tiruvanamalai': 'tiruvannamalai'
+        'tiruvanamalai': 'tiruvannamalai',
+        'vellore': 'vellore',
+        'mahabalipuram': 'mahabalipuram',
+        'madurai': 'madurai',
+        'coimbatore': 'coimbatore',
+        'trichy': 'trichy',
+        'pondicherry': 'pondicherry',
+        'bengaluru': 'bengaluru',
+        'hyderabad': 'hyderabad',
+        'mumbai': 'mumbai',
+        'delhi': 'delhi',
+        'kolkata': 'kolkata',
+        'jaipur': 'jaipur',
+        'ahmedabad': 'ahmedabad',
+        'pune': 'pune',
+        'surat': 'surat',
+        'visakhapatnam': 'visakhapatnam',
+        'lucknow': 'lucknow',
+        'patna': 'patna',
+        'chandigarh': 'chandigarh'
     };
     return alias[n] || n;
 }
@@ -2637,7 +2656,7 @@ function zomoAssistantAnswer(question) {
             const maxPrice = parseFloat(priceMatch[2]);
             const filteredProducts = products.filter(p => p.price <= maxPrice);
             if (filteredProducts.length > 0) {
-                const top = filteredProducts.slice(0, 5).map(p => `• ${p.name} - $${p.price.toFixed(2)}`).join('\n');
+                const top = filteredProducts.slice(0, 5).map(p => `• ${p.name} - ${p.price.toFixed(2)}`).join('\n');
                 return `Products under $${maxPrice}:\n${top}\n\nBrowse all products in the Shop section!`;
             }
         }
@@ -2648,13 +2667,13 @@ function zomoAssistantAnswer(question) {
         if (matchedCategory) {
             const categoryProducts = products.filter(p => p.category.toLowerCase() === matchedCategory);
             if (categoryProducts.length > 0) {
-                const top = categoryProducts.slice(0, 5).map(p => `• ${p.name} - $${p.price.toFixed(2)}`).join('\n');
+                const top = categoryProducts.slice(0, 5).map(p => `• ${p.name} - ${p.price.toFixed(2)}`).join('\n');
                 return `${matchedCategory.charAt(0).toUpperCase() + matchedCategory.slice(1)} products:\n${top}\n\nUse the category filter in Shop to see all ${matchedCategory} items!`;
             }
         }
         
         // General product info
-        const top = products.slice(0, 8).map(p => `• ${p.name} - $${p.price.toFixed(2)}`).join('\n');
+        const top = products.slice(0, 8).map(p => `• ${p.name} - ${p.price.toFixed(2)}`).join('\n');
         return `🛍️ **Zomo Store Products**\n\nPopular items:\n${top}\n\n**Categories available:** Electronics, Food, Gifts, Vegetables, Fruits, Flowers, Dresses, Meats, Rices, Snacks, Creams, Home Appliances, Books\n\nVisit the Shop to browse all products and use category filters!`;
     }
 
@@ -2663,8 +2682,8 @@ function zomoAssistantAnswer(question) {
         const cart = getCart();
         if (cart.length > 0) {
             const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const cartItems = cart.map(item => `• ${item.name} × ${item.quantity} - $${(item.price * item.quantity).toFixed(2)}`).join('\n');
-            return `🛒 **Your Cart** (${cart.length} items)\n\n${cartItems}\n\n**Subtotal:** $${cartTotal.toFixed(2)}\n\n**Next Steps:**\n1. Go to Cart page to review items\n2. Proceed to Checkout\n3. Choose delivery type (Standard/Express/Same Day)\n4. Complete payment\n\nReady to checkout?`;
+            const cartItems = cart.map(item => `• ${item.name} × ${item.quantity} - ${(item.price * item.quantity).toFixed(2)}`).join('\n');
+            return `🛒 **Your Cart** (${cart.length} items)\n\n${cartItems}\n\n**Subtotal:** ${cartTotal.toFixed(2)}\n\n**Next Steps:**\n1. Go to Cart page to review items\n2. Proceed to Checkout\n3. Choose delivery type (Standard/Express/Same Day)\n4. Complete payment\n\nReady to checkout?`;
         }
         return `🛒 **Shopping Cart**\n\nYour cart is currently empty. Here's how to shop:\n\n1. **Browse Products**: Visit the Shop page\n2. **Add to Cart**: Click the cart icon on any product\n3. **Review Cart**: Check your items and quantities\n4. **Checkout**: Choose delivery options and complete payment\n\nStart shopping now!`;
     }
@@ -2942,12 +2961,12 @@ function initializeInternationalProcurement() {
         const otherEl = document.getElementById('intlOtherAmt');
         const totalEl = document.getElementById('intlTotalLanded');
         const unitEl = document.getElementById('intlUnitLanded');
-        if (baseEl) baseEl.textContent = `$${base.toFixed(2)}`;
-        if (dutyEl) dutyEl.textContent = `$${duty.toFixed(2)}`;
-        if (shipEl) shipEl.textContent = `$${ship.toFixed(2)}`;
-        if (otherEl) otherEl.textContent = `$${other.toFixed(2)}`;
-        if (totalEl) totalEl.textContent = `$${total.toFixed(2)}`;
-        if (unitEl) unitEl.textContent = `$${(qty > 0 ? total/qty : 0).toFixed(2)}`;
+        if (baseEl) baseEl.textContent = `${base.toFixed(2)}`;
+        if (dutyEl) dutyEl.textContent = `${duty.toFixed(2)}`;
+        if (shipEl) shipEl.textContent = `${ship.toFixed(2)}`;
+        if (otherEl) otherEl.textContent = `${other.toFixed(2)}`;
+        if (totalEl) totalEl.textContent = `${total.toFixed(2)}`;
+        if (unitEl) unitEl.textContent = `${(qty > 0 ? total/qty : 0).toFixed(2)}`;
     }
 
     if (currencySelect && rateInput) {
